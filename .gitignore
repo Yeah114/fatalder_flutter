@@ -1,9 +1,9 @@
 fatalder-grpc
-android/
-ios/
-macos/
-linux/
-windows/
+#android/
+#ios/
+#macos/
+#linux/
+#windows/
 
 # Miscellaneous
 *.class
