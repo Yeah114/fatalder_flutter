@@ -1,4 +1,7 @@
 fatalder-grpc
+grpc_server*
+fatalder_grpc*
+
 #android/
 #ios/
 #macos/

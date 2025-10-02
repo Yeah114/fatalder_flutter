@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import '../models/app_state.dart';
 import '../services/grpc_service.dart';
 import '../generated/fatalder.pbgrpc.dart';
+import '../widgets/task_dialogs.dart';
+import 'task_execution_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -25,6 +27,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             // 连接状态卡片
             _buildConnectionCard(context, appState),
+            const SizedBox(height: 16),
+
+            // 快捷操作
+            _buildSectionTitle('快捷操作'),
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.build, color: Colors.blue),
+                    title: const Text('快速构建'),
+                    subtitle: const Text('直接创建并执行构建任务'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showQuickBuildDialog(context, appState),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.upload_file, color: Colors.green),
+                    title: const Text('快速导出'),
+                    subtitle: const Text('直接创建并执行导出任务'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showQuickExportDialog(context, appState),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
 
             // 框架配置
@@ -68,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.speed),
                     title: const Text('单次解析区块数'),
-                    subtitle: Text('${config?.buildConfig?.minOnceParseChunkNum ?? 512} 个区块'),
+                    subtitle: Text('${config?.buildConfig.minOnceParseChunkNum ?? 512} 个区块'),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showMinOnceParseChunkNumDialog(context),
                   ),
@@ -76,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.percent),
                     title: const Text('最小匹配度'),
-                    subtitle: Text('${config?.buildConfig?.minMatchingDegree?.toStringAsFixed(1) ?? '90.0'}%'),
+                    subtitle: Text('${config?.buildConfig.minMatchingDegree.toStringAsFixed(1) ?? '90.0'}%'),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showMinMatchingDegreeDialog(context),
                   ),
@@ -84,7 +111,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.layers),
                     title: const Text('最大修补深度'),
-                    subtitle: Text('${config?.buildConfig?.maxFixDepth ?? 5} 次'),
+                    subtitle: Text('${config?.buildConfig.maxFixDepth ?? 5} 次'),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showMaxFixDepthDialog(context),
                   ),
@@ -101,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.cloud),
                     title: const Text('用户中心地址'),
-                    subtitle: Text(config?.userCenterConfig?.baseRoot ?? '未设置'),
+                    subtitle: Text(config?.userCenterConfig.baseRoot ?? '未设置'),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showUserCenterHostDialog(context),
                   ),
@@ -109,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.key),
                     title: const Text('API 密钥'),
-                    subtitle: Text(_maskApiKey(config?.userCenterConfig?.apiKey ?? '')),
+                    subtitle: Text(_maskApiKey(config?.userCenterConfig.apiKey ?? '')),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showApiKeyDialog(context),
                   ),
@@ -275,16 +302,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       dialogTitle: '选择存储路径',
     );
 
-    if (selectedDirectory != null) {
-      await _updateFrameworkConfig(storagePath: selectedDirectory);
+    await _updateFrameworkConfig(storagePath: selectedDirectory);
     }
-  }
 
   // 显示用户中心地址对话框
   void _showUserCenterHostDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: appState.frameworkConfig?.userCenterConfig?.baseRoot ?? '',
+      text: appState.frameworkConfig?.userCenterConfig.baseRoot ?? '',
     );
 
     showDialog(
@@ -320,7 +345,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showApiKeyDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: appState.frameworkConfig?.userCenterConfig?.apiKey ?? '',
+      text: appState.frameworkConfig?.userCenterConfig.apiKey ?? '',
     );
     bool obscureText = true;
 
@@ -376,8 +401,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // 构建 UserCenterConfig
       final userCenterConfig = UserCenterConfig(
-        baseRoot: userCenterHost ?? currentConfig?.userCenterConfig?.baseRoot ?? '',
-        apiKey: userCenterApiKey ?? currentConfig?.userCenterConfig?.apiKey ?? '',
+        baseRoot: userCenterHost ?? currentConfig?.userCenterConfig.baseRoot ?? '',
+        apiKey: userCenterApiKey ?? currentConfig?.userCenterConfig.apiKey ?? '',
       );
 
       final newConfig = FrameworkConfig(
@@ -551,7 +576,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMinOnceParseChunkNumDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: (appState.frameworkConfig?.buildConfig?.minOnceParseChunkNum ?? 512).toString(),
+      text: (appState.frameworkConfig?.buildConfig.minOnceParseChunkNum ?? 512).toString(),
     );
 
     showDialog(
@@ -607,7 +632,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMinMatchingDegreeDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: (appState.frameworkConfig?.buildConfig?.minMatchingDegree ?? 90.0).toString(),
+      text: (appState.frameworkConfig?.buildConfig.minMatchingDegree ?? 90.0).toString(),
     );
 
     showDialog(
@@ -663,7 +688,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMaxFixDepthDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: (appState.frameworkConfig?.buildConfig?.maxFixDepth ?? 5).toString(),
+      text: (appState.frameworkConfig?.buildConfig.maxFixDepth ?? 5).toString(),
     );
 
     showDialog(
@@ -756,5 +781,519 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       }
     }
+  }
+
+  // 显示快速构建对话框
+  Future<void> _showQuickBuildDialog(BuildContext context, AppState appState) async {
+    // 检查是否有服务器配置
+    if (appState.serverConfigs.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先添加服务器配置')),
+      );
+      return;
+    }
+
+    // 显示构建任务对话框
+    final buildTask = await showDialog<BuildTask>(
+      context: context,
+      builder: (context) => const BuildTaskDialog(),
+    );
+
+    if (buildTask == null) return;
+
+    // 选择服务器配置
+    if (!mounted) return;
+    final serverConfig = await _selectServerConfig(context, appState);
+    if (serverConfig == null) return;
+
+    // 直接执行构建任务
+    if (!mounted) return;
+    await _executeQuickBuildTask(context, serverConfig, buildTask);
+  }
+
+  // 显示快速导出对话框
+  Future<void> _showQuickExportDialog(BuildContext context, AppState appState) async {
+    // 检查是否有服务器配置
+    if (appState.serverConfigs.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先添加服务器配置')),
+      );
+      return;
+    }
+
+    // 显示导出任务对话框
+    final exportTask = await showDialog<ExportTask>(
+      context: context,
+      builder: (context) => const ExportTaskDialog(),
+    );
+
+    if (exportTask == null) return;
+
+    // 选择服务器配置
+    if (!mounted) return;
+    final serverConfig = await _selectServerConfig(context, appState);
+    if (serverConfig == null) return;
+
+    // 直接执行导出任务
+    if (!mounted) return;
+    await _executeQuickExportTask(context, serverConfig, exportTask);
+  }
+
+  // 选择服务器配置
+  Future<String?> _selectServerConfig(BuildContext context, AppState appState) async {
+    if (appState.serverConfigs.length == 1) {
+      return appState.serverConfigs.first.name;
+    }
+
+    return await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('选择服务器配置'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: appState.serverConfigs.map((config) {
+            return ListTile(
+              leading: const Icon(Icons.dns),
+              title: Text(config.name),
+              subtitle: Text('Code: ${config.rentalServerCode}'),
+              onTap: () => Navigator.pop(context, config.name),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // 执行快速构建任务
+  Future<void> _executeQuickBuildTask(
+    BuildContext context,
+    String serverConfigName,
+    BuildTask buildTask,
+  ) async {
+    try {
+      final request = StartBuildRequest()
+        ..serverConfigName = serverConfigName
+        ..task = buildTask
+        ..resumeFromInterrupt = false;
+
+      // 显示执行进度对话框
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => _QuickBuildProgressDialog(
+          request: request,
+          serverConfigName: serverConfigName,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('执行失败: $e')),
+      );
+    }
+  }
+
+  // 执行快速导出任务
+  Future<void> _executeQuickExportTask(
+    BuildContext context,
+    String serverConfigName,
+    ExportTask exportTask,
+  ) async {
+    try {
+      final request = StartExportRequest()
+        ..serverConfigName = serverConfigName
+        ..task = exportTask;
+
+      // 显示执行进度对话框
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => _QuickExportProgressDialog(
+          request: request,
+          serverConfigName: serverConfigName,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('执行失败: $e')),
+      );
+    }
+  }
+}
+
+// 快速构建进度对话框
+class _QuickBuildProgressDialog extends StatefulWidget {
+  final StartBuildRequest request;
+  final String serverConfigName;
+
+  const _QuickBuildProgressDialog({
+    required this.request,
+    required this.serverConfigName,
+  });
+
+  @override
+  State<_QuickBuildProgressDialog> createState() => _QuickBuildProgressDialogState();
+}
+
+class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
+  String _status = 'preparing';
+  String _message = '准备中...';
+  int _currentChunk = 0;
+  int _totalChunks = 0;
+  double _progressPercent = 0.0;
+  bool _isCompleted = false;
+  bool _isFailed = false;
+
+  final List<String> _logs = [];
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _startBuild();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startBuild() async {
+    try {
+      final stream = GrpcService().client.startBuild(widget.request);
+
+      await for (final progress in stream) {
+        setState(() {
+          _status = progress.status;
+          _message = progress.message;
+          _currentChunk = progress.currentChunk;
+          _totalChunks = progress.totalChunks;
+          _progressPercent = progress.progressPercent;
+        });
+
+        _addLog('[${_getStatusLabel(progress.status)}] ${progress.message}');
+
+        if (progress.totalChunks > 0) {
+          _addLog('  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)');
+        }
+
+        // 显示日志消息
+        if (progress.logMessage.isNotEmpty) {
+          _addLog(progress.logMessage);
+        }
+
+        if (progress.status == 'failed') {
+          setState(() => _isFailed = true);
+          _addLog('❌ 构建失败!');
+          return;
+        }
+
+        if (progress.status == 'completed') {
+          setState(() => _isCompleted = true);
+          _addLog('✅ 构建完成!');
+          return;
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isFailed = true;
+        _message = '错误: $e';
+      });
+      _addLog('❌ 执行错误: $e');
+    }
+  }
+
+  String _getStatusLabel(String status) {
+    switch (status) {
+      case 'parsing':
+        return '解析中';
+      case 'building':
+        return '构建中';
+      case 'completed':
+        return '已完成';
+      case 'failed':
+        return '失败';
+      default:
+        return status;
+    }
+  }
+
+  void _addLog(String message) {
+    setState(() {
+      _logs.add(message);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Row(
+        children: [
+          Icon(
+            _isFailed
+                ? Icons.error
+                : _isCompleted
+                    ? Icons.check_circle
+                    : Icons.build,
+            color: _isFailed
+                ? Colors.red
+                : _isCompleted
+                    ? Colors.green
+                    : Colors.blue,
+          ),
+          const SizedBox(width: 8),
+          const Text('快速构建'),
+        ],
+      ),
+      content: SizedBox(
+        width: 500,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('服务器: ${widget.serverConfigName}'),
+            const SizedBox(height: 8),
+            Text('状态: $_message'),
+            const SizedBox(height: 16),
+            if (_totalChunks > 0) ...[
+              Text('区块进度: $_currentChunk / $_totalChunks'),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: _totalChunks > 0 ? _currentChunk / _totalChunks : 0,
+              ),
+              const SizedBox(height: 4),
+              Text('${_progressPercent.toStringAsFixed(1)}%'),
+              const SizedBox(height: 16),
+            ],
+            const Divider(),
+            const Text('执行日志', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: _logs.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      child: Text(
+                        _logs[index],
+                        style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        if (_isCompleted || _isFailed)
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('关闭'),
+          ),
+      ],
+    );
+  }
+}
+
+// 快速导出进度对话框
+class _QuickExportProgressDialog extends StatefulWidget {
+  final StartExportRequest request;
+  final String serverConfigName;
+
+  const _QuickExportProgressDialog({
+    required this.request,
+    required this.serverConfigName,
+  });
+
+  @override
+  State<_QuickExportProgressDialog> createState() => _QuickExportProgressDialogState();
+}
+
+class _QuickExportProgressDialogState extends State<_QuickExportProgressDialog> {
+  String _status = 'preparing';
+  String _message = '准备中...';
+  int _currentChunk = 0;
+  int _totalChunks = 0;
+  double _progressPercent = 0.0;
+  bool _isCompleted = false;
+  bool _isFailed = false;
+
+  final List<String> _logs = [];
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _startExport();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startExport() async {
+    try {
+      final stream = GrpcService().client.startExport(widget.request);
+
+      await for (final progress in stream) {
+        setState(() {
+          _status = progress.status;
+          _message = progress.message;
+          _currentChunk = progress.currentChunk;
+          _totalChunks = progress.totalChunks;
+          _progressPercent = progress.progressPercent;
+        });
+
+        _addLog('[${progress.status}] ${progress.message}');
+
+        if (progress.totalChunks > 0) {
+          _addLog('  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)');
+        }
+
+        // 显示日志消息
+        if (progress.logMessage.isNotEmpty) {
+          _addLog(progress.logMessage);
+        }
+
+        if (progress.status == 'failed') {
+          setState(() => _isFailed = true);
+          _addLog('❌ 导出失败!');
+          return;
+        }
+
+        if (progress.status == 'completed') {
+          setState(() => _isCompleted = true);
+          _addLog('✅ 导出完成!');
+          if (progress.outputPath.isNotEmpty) {
+            _addLog('输出路径: ${progress.outputPath}');
+          }
+          return;
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isFailed = true;
+        _message = '错误: $e';
+      });
+      _addLog('❌ 执行错误: $e');
+    }
+  }
+
+  void _addLog(String message) {
+    setState(() {
+      _logs.add(message);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Row(
+        children: [
+          Icon(
+            _isFailed
+                ? Icons.error
+                : _isCompleted
+                    ? Icons.check_circle
+                    : Icons.upload_file,
+            color: _isFailed
+                ? Colors.red
+                : _isCompleted
+                    ? Colors.green
+                    : Colors.blue,
+          ),
+          const SizedBox(width: 8),
+          const Text('快速导出'),
+        ],
+      ),
+      content: SizedBox(
+        width: 500,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('服务器: ${widget.serverConfigName}'),
+            const SizedBox(height: 8),
+            Text('状态: $_message'),
+            const SizedBox(height: 16),
+            if (_totalChunks > 0) ...[
+              Text('区块进度: $_currentChunk / $_totalChunks'),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: _totalChunks > 0 ? _currentChunk / _totalChunks : 0,
+              ),
+              const SizedBox(height: 4),
+              Text('${_progressPercent.toStringAsFixed(1)}%'),
+              const SizedBox(height: 16),
+            ],
+            const Divider(),
+            const Text('执行日志', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: _logs.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      child: Text(
+                        _logs[index],
+                        style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        if (_isCompleted || _isFailed)
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('关闭'),
+          ),
+      ],
+    );
   }
 }

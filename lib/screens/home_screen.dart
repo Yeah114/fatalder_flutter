@@ -53,10 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _switchTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      const DashboardTab(),
+      DashboardTab(onTabSwitch: _switchTab),
       const ServerConfigScreen(),
       const TaskGroupScreen(),
       const SettingsScreen(),
@@ -108,7 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class DashboardTab extends StatelessWidget {
-  const DashboardTab({super.key});
+  final Function(int) onTabSwitch;
+
+  const DashboardTab({super.key, required this.onTabSwitch});
 
   @override
   Widget build(BuildContext context) {
@@ -181,18 +189,14 @@ class DashboardTab extends StatelessWidget {
                       title: '服务器配置',
                       subtitle: '${appState.serverConfigs.length} 个配置',
                       color: Colors.orange,
-                      onTap: () {
-                        // Switch to server tab
-                      },
+                      onTap: () => onTabSwitch(1),
                     ),
                     _QuickActionCard(
                       icon: Icons.task,
                       title: '任务组',
                       subtitle: '${appState.taskGroups.length} 个任务组',
                       color: Colors.purple,
-                      onTap: () {
-                        // Switch to task tab
-                      },
+                      onTap: () => onTabSwitch(2),
                     ),
                   ],
                 ),
