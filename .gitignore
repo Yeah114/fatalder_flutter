@@ -1,3 +1,10 @@
+fatalder-grpc
+android/
+ios/
+macos/
+linux/
+windows/
+
 # Miscellaneous
 *.class
 *.lock
