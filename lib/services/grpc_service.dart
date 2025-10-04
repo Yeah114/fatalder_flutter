@@ -18,6 +18,7 @@ class GrpcService {
   IOSink? _logSink;
   String? _logFilePath;
   String? _appDocPath;
+  String? _resolvedStoragePath;
   StreamSubscription<String>? _stdoutSubscription;
   StreamSubscription<String>? _stderrSubscription;
   bool _storagePermissionChecked = false;
@@ -118,6 +119,34 @@ class GrpcService {
     _storagePermissionChecked = true;
     _hasExternalStoragePermission = granted;
     return granted;
+  }
+
+  Future<String> _resolveStoragePath() async {
+    if (!Platform.isAndroid) {
+      return _ensureAppDocumentPath();
+    }
+
+    if (_resolvedStoragePath != null) {
+      return _resolvedStoragePath!;
+    }
+
+    const externalPath = '/sdcard/Fatalder';
+    if (await _ensureStoragePermission()) {
+      try {
+        final dir = Directory(externalPath);
+        await dir.create(recursive: true);
+        _resolvedStoragePath = dir.path;
+        return dir.path;
+      } catch (e) {
+        print('⚠️ 无法在 $externalPath 创建目录，回退至内部目录: $e');
+      }
+    } else {
+      print('⚠️ 外部存储权限未授予，使用内部存储目录');
+    }
+
+    final fallback = await _ensureAppDocumentPath();
+    _resolvedStoragePath = fallback;
+    return fallback;
   }
 
   /// 获取 gRPC 二进制文件路径
@@ -327,7 +356,7 @@ class GrpcService {
 
       // 启动服务进程
       print('🚀 Starting gRPC server on port $_port...');
-      final storagePath = await _ensureAppDocumentPath();
+      final storagePath = await _resolveStoragePath();
       final launchArgs = [
         '-port',
         _port.toString(),
