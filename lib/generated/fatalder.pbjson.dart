@@ -1,14 +1,13 @@
-// This is a generated file - do not edit.
 //
-// Generated from fatalder.proto.
-
-// @dart = 3.3
+//  Generated code. Do not modify.
+//  source: fatalder.proto
+//
+// @dart = 2.12
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names
-// ignore_for_file: curly_braces_in_flow_control_structures
-// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -20,8 +19,8 @@ const Empty$json = {
 };
 
 /// Descriptor for `Empty`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List emptyDescriptor =
-    $convert.base64Decode('CgVFbXB0eQ==');
+final $typed_data.Uint8List emptyDescriptor = $convert.base64Decode(
+    'CgVFbXB0eQ==');
 
 @$core.Deprecated('Use blockPosDescriptor instead')
 const BlockPos$json = {
@@ -42,20 +41,8 @@ const ServerConfig$json = {
   '1': 'ServerConfig',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
-    {
-      '1': 'rental_server_code',
-      '3': 2,
-      '4': 1,
-      '5': 9,
-      '10': 'rentalServerCode'
-    },
-    {
-      '1': 'rental_server_passcode',
-      '3': 3,
-      '4': 1,
-      '5': 9,
-      '10': 'rentalServerPasscode'
-    },
+    {'1': 'rental_server_code', '3': 2, '4': 1, '5': 9, '10': 'rentalServerCode'},
+    {'1': 'rental_server_passcode', '3': 3, '4': 1, '5': 9, '10': 'rentalServerPasscode'},
   ],
 };
 
@@ -69,14 +56,7 @@ final $typed_data.Uint8List serverConfigDescriptor = $convert.base64Decode(
 const ServerConfigList$json = {
   '1': 'ServerConfigList',
   '2': [
-    {
-      '1': 'configs',
-      '3': 1,
-      '4': 3,
-      '5': 11,
-      '6': '.fatalder.ServerConfig',
-      '10': 'configs'
-    },
+    {'1': 'configs', '3': 1, '4': 3, '5': 11, '6': '.fatalder.ServerConfig', '10': 'configs'},
   ],
 };
 
@@ -94,9 +74,8 @@ const GetServerConfigRequest$json = {
 };
 
 /// Descriptor for `GetServerConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getServerConfigRequestDescriptor =
-    $convert.base64Decode(
-        'ChZHZXRTZXJ2ZXJDb25maWdSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
+final $typed_data.Uint8List getServerConfigRequestDescriptor = $convert.base64Decode(
+    'ChZHZXRTZXJ2ZXJDb25maWdSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
 
 @$core.Deprecated('Use deleteServerConfigRequestDescriptor instead')
 const DeleteServerConfigRequest$json = {
@@ -107,9 +86,8 @@ const DeleteServerConfigRequest$json = {
 };
 
 /// Descriptor for `DeleteServerConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deleteServerConfigRequestDescriptor =
-    $convert.base64Decode(
-        'ChlEZWxldGVTZXJ2ZXJDb25maWdSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
+final $typed_data.Uint8List deleteServerConfigRequestDescriptor = $convert.base64Decode(
+    'ChlEZWxldGVTZXJ2ZXJDb25maWdSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
 
 @$core.Deprecated('Use buildTaskDescriptor instead')
 const BuildTask$json = {
@@ -117,89 +95,21 @@ const BuildTask$json = {
   '2': [
     {'1': 'task_type', '3': 1, '4': 1, '5': 9, '10': 'taskType'},
     {'1': 'file_path', '3': 2, '4': 1, '5': 9, '10': 'filePath'},
-    {
-      '1': 'start_pos',
-      '3': 3,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BlockPos',
-      '10': 'startPos'
-    },
+    {'1': 'start_pos', '3': 3, '4': 1, '5': 11, '6': '.fatalder.BlockPos', '10': 'startPos'},
     {'1': 'speed', '3': 4, '4': 1, '5': 5, '10': 'speed'},
     {'1': 'auto_clean_block', '3': 5, '4': 1, '5': 8, '10': 'autoCleanBlock'},
     {'1': 'auto_clean_item', '3': 6, '4': 1, '5': 8, '10': 'autoCleanItem'},
-    {
-      '1': 'verify_after_chunk',
-      '3': 7,
-      '4': 1,
-      '5': 5,
-      '10': 'verifyAfterChunk'
-    },
-    {
-      '1': 'verify_chunk_level',
-      '3': 8,
-      '4': 1,
-      '5': 5,
-      '10': 'verifyChunkLevel'
-    },
+    {'1': 'verify_after_chunk', '3': 7, '4': 1, '5': 5, '10': 'verifyAfterChunk'},
+    {'1': 'verify_chunk_level', '3': 8, '4': 1, '5': 5, '10': 'verifyChunkLevel'},
     {'1': 'progress', '3': 9, '4': 1, '5': 5, '10': 'progress'},
-    {
-      '1': 'auto_disable_command',
-      '3': 10,
-      '4': 1,
-      '5': 8,
-      '10': 'autoDisableCommand'
-    },
-    {
-      '1': 'auto_upgrade_command',
-      '3': 11,
-      '4': 1,
-      '5': 8,
-      '10': 'autoUpgradeCommand'
-    },
-    {
-      '1': 'ignore_command_block',
-      '3': 12,
-      '4': 1,
-      '5': 8,
-      '10': 'ignoreCommandBlock'
-    },
-    {
-      '1': 'ignore_other_nbt_block',
-      '3': 13,
-      '4': 1,
-      '5': 8,
-      '10': 'ignoreOtherNbtBlock'
-    },
-    {
-      '1': 'console_world_pos',
-      '3': 14,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BlockPos',
-      '10': 'consoleWorldPos'
-    },
-    {
-      '1': 'show_nbt_progress',
-      '3': 15,
-      '4': 1,
-      '5': 8,
-      '10': 'showNbtProgress'
-    },
-    {
-      '1': 'auto_enter_fix_mode',
-      '3': 16,
-      '4': 1,
-      '5': 8,
-      '10': 'autoEnterFixMode'
-    },
-    {
-      '1': 'enter_fix_mode_directly',
-      '3': 17,
-      '4': 1,
-      '5': 8,
-      '10': 'enterFixModeDirectly'
-    },
+    {'1': 'auto_disable_command', '3': 10, '4': 1, '5': 8, '10': 'autoDisableCommand'},
+    {'1': 'auto_upgrade_command', '3': 11, '4': 1, '5': 8, '10': 'autoUpgradeCommand'},
+    {'1': 'ignore_command_block', '3': 12, '4': 1, '5': 8, '10': 'ignoreCommandBlock'},
+    {'1': 'ignore_other_nbt_block', '3': 13, '4': 1, '5': 8, '10': 'ignoreOtherNbtBlock'},
+    {'1': 'console_world_pos', '3': 14, '4': 1, '5': 11, '6': '.fatalder.BlockPos', '10': 'consoleWorldPos'},
+    {'1': 'show_nbt_progress', '3': 15, '4': 1, '5': 8, '10': 'showNbtProgress'},
+    {'1': 'auto_enter_fix_mode', '3': 16, '4': 1, '5': 8, '10': 'autoEnterFixMode'},
+    {'1': 'enter_fix_mode_directly', '3': 17, '4': 1, '5': 8, '10': 'enterFixModeDirectly'},
   ],
 };
 
@@ -227,22 +137,8 @@ const ExportTask$json = {
     {'1': 'task_type', '3': 1, '4': 1, '5': 9, '10': 'taskType'},
     {'1': 'file_path', '3': 2, '4': 1, '5': 9, '10': 'filePath'},
     {'1': 'file_type', '3': 3, '4': 1, '5': 9, '10': 'fileType'},
-    {
-      '1': 'start_pos',
-      '3': 4,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BlockPos',
-      '10': 'startPos'
-    },
-    {
-      '1': 'end_pos',
-      '3': 5,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BlockPos',
-      '10': 'endPos'
-    },
+    {'1': 'start_pos', '3': 4, '4': 1, '5': 11, '6': '.fatalder.BlockPos', '10': 'startPos'},
+    {'1': 'end_pos', '3': 5, '4': 1, '5': 11, '6': '.fatalder.BlockPos', '10': 'endPos'},
   ],
 };
 
@@ -257,24 +153,8 @@ final $typed_data.Uint8List exportTaskDescriptor = $convert.base64Decode(
 const Task$json = {
   '1': 'Task',
   '2': [
-    {
-      '1': 'build_task',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BuildTask',
-      '9': 0,
-      '10': 'buildTask'
-    },
-    {
-      '1': 'export_task',
-      '3': 2,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.ExportTask',
-      '9': 0,
-      '10': 'exportTask'
-    },
+    {'1': 'build_task', '3': 1, '4': 1, '5': 11, '6': '.fatalder.BuildTask', '9': 0, '10': 'buildTask'},
+    {'1': 'export_task', '3': 2, '4': 1, '5': 11, '6': '.fatalder.ExportTask', '9': 0, '10': 'exportTask'},
   ],
   '8': [
     {'1': 'task'},
@@ -292,14 +172,7 @@ const TaskGroup$json = {
   '1': 'TaskGroup',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
-    {
-      '1': 'tasks',
-      '3': 2,
-      '4': 3,
-      '5': 11,
-      '6': '.fatalder.Task',
-      '10': 'tasks'
-    },
+    {'1': 'tasks', '3': 2, '4': 3, '5': 11, '6': '.fatalder.Task', '10': 'tasks'},
   ],
 };
 
@@ -317,8 +190,8 @@ const TaskGroupList$json = {
 };
 
 /// Descriptor for `TaskGroupList`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List taskGroupListDescriptor = $convert
-    .base64Decode('Cg1UYXNrR3JvdXBMaXN0EhQKBW5hbWVzGAEgAygJUgVuYW1lcw==');
+final $typed_data.Uint8List taskGroupListDescriptor = $convert.base64Decode(
+    'Cg1UYXNrR3JvdXBMaXN0EhQKBW5hbWVzGAEgAygJUgVuYW1lcw==');
 
 @$core.Deprecated('Use getTaskGroupRequestDescriptor instead')
 const GetTaskGroupRequest$json = {
@@ -329,30 +202,22 @@ const GetTaskGroupRequest$json = {
 };
 
 /// Descriptor for `GetTaskGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTaskGroupRequestDescriptor = $convert
-    .base64Decode('ChNHZXRUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
+final $typed_data.Uint8List getTaskGroupRequestDescriptor = $convert.base64Decode(
+    'ChNHZXRUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
 
 @$core.Deprecated('Use createTaskGroupRequestDescriptor instead')
 const CreateTaskGroupRequest$json = {
   '1': 'CreateTaskGroupRequest',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
-    {
-      '1': 'tasks',
-      '3': 2,
-      '4': 3,
-      '5': 11,
-      '6': '.fatalder.Task',
-      '10': 'tasks'
-    },
+    {'1': 'tasks', '3': 2, '4': 3, '5': 11, '6': '.fatalder.Task', '10': 'tasks'},
   ],
 };
 
 /// Descriptor for `CreateTaskGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createTaskGroupRequestDescriptor =
-    $convert.base64Decode(
-        'ChZDcmVhdGVUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWUSJAoFdGFza3MYAi'
-        'ADKAsyDi5mYXRhbGRlci5UYXNrUgV0YXNrcw==');
+final $typed_data.Uint8List createTaskGroupRequestDescriptor = $convert.base64Decode(
+    'ChZDcmVhdGVUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWUSJAoFdGFza3MYAi'
+    'ADKAsyDi5mYXRhbGRlci5UYXNrUgV0YXNrcw==');
 
 @$core.Deprecated('Use deleteTaskGroupRequestDescriptor instead')
 const DeleteTaskGroupRequest$json = {
@@ -363,22 +228,15 @@ const DeleteTaskGroupRequest$json = {
 };
 
 /// Descriptor for `DeleteTaskGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deleteTaskGroupRequestDescriptor =
-    $convert.base64Decode(
-        'ChZEZWxldGVUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
+final $typed_data.Uint8List deleteTaskGroupRequestDescriptor = $convert.base64Decode(
+    'ChZEZWxldGVUYXNrR3JvdXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
 
 @$core.Deprecated('Use executeTaskGroupRequestDescriptor instead')
 const ExecuteTaskGroupRequest$json = {
   '1': 'ExecuteTaskGroupRequest',
   '2': [
     {'1': 'task_group_name', '3': 1, '4': 1, '5': 9, '10': 'taskGroupName'},
-    {
-      '1': 'server_config_name',
-      '3': 2,
-      '4': 1,
-      '5': 9,
-      '10': 'serverConfigName'
-    },
+    {'1': 'server_config_name', '3': 2, '4': 1, '5': 9, '10': 'serverConfigName'},
   ],
 };
 
@@ -424,13 +282,7 @@ const BuildProgress$json = {
     {'1': 'height', '3': 8, '4': 1, '5': 5, '10': 'height'},
     {'1': 'length', '3': 9, '4': 1, '5': 5, '10': 'length'},
     {'1': 'block_count', '3': 10, '4': 1, '5': 5, '10': 'blockCount'},
-    {
-      '1': 'command_block_count',
-      '3': 11,
-      '4': 1,
-      '5': 5,
-      '10': 'commandBlockCount'
-    },
+    {'1': 'command_block_count', '3': 11, '4': 1, '5': 5, '10': 'commandBlockCount'},
     {'1': 'nbt_count', '3': 12, '4': 1, '5': 5, '10': 'nbtCount'},
     {'1': 'cost_deducted', '3': 13, '4': 1, '5': 5, '10': 'costDeducted'},
     {'1': 'balance', '3': 14, '4': 1, '5': 9, '10': 'balance'},
@@ -481,36 +333,16 @@ const BuildControlRequest$json = {
 };
 
 /// Descriptor for `BuildControlRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List buildControlRequestDescriptor =
-    $convert.base64Decode(
-        'ChNCdWlsZENvbnRyb2xSZXF1ZXN0EhYKBmFjdGlvbhgBIAEoCVIGYWN0aW9u');
+final $typed_data.Uint8List buildControlRequestDescriptor = $convert.base64Decode(
+    'ChNCdWlsZENvbnRyb2xSZXF1ZXN0EhYKBmFjdGlvbhgBIAEoCVIGYWN0aW9u');
 
 @$core.Deprecated('Use startBuildRequestDescriptor instead')
 const StartBuildRequest$json = {
   '1': 'StartBuildRequest',
   '2': [
-    {
-      '1': 'server_config_name',
-      '3': 1,
-      '4': 1,
-      '5': 9,
-      '10': 'serverConfigName'
-    },
-    {
-      '1': 'task',
-      '3': 2,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BuildTask',
-      '10': 'task'
-    },
-    {
-      '1': 'resume_from_interrupt',
-      '3': 3,
-      '4': 1,
-      '5': 8,
-      '10': 'resumeFromInterrupt'
-    },
+    {'1': 'server_config_name', '3': 1, '4': 1, '5': 9, '10': 'serverConfigName'},
+    {'1': 'task', '3': 2, '4': 1, '5': 11, '6': '.fatalder.BuildTask', '10': 'task'},
+    {'1': 'resume_from_interrupt', '3': 3, '4': 1, '5': 8, '10': 'resumeFromInterrupt'},
   ],
 };
 
@@ -524,21 +356,8 @@ final $typed_data.Uint8List startBuildRequestDescriptor = $convert.base64Decode(
 const StartExportRequest$json = {
   '1': 'StartExportRequest',
   '2': [
-    {
-      '1': 'server_config_name',
-      '3': 1,
-      '4': 1,
-      '5': 9,
-      '10': 'serverConfigName'
-    },
-    {
-      '1': 'task',
-      '3': 2,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.ExportTask',
-      '10': 'task'
-    },
+    {'1': 'server_config_name', '3': 1, '4': 1, '5': 9, '10': 'serverConfigName'},
+    {'1': 'task', '3': 2, '4': 1, '5': 11, '6': '.fatalder.ExportTask', '10': 'task'},
   ],
 };
 
@@ -553,23 +372,9 @@ const FrameworkConfig$json = {
   '2': [
     {'1': 'language', '3': 1, '4': 1, '5': 9, '10': 'language'},
     {'1': 'storage_path', '3': 2, '4': 1, '5': 9, '10': 'storagePath'},
-    {
-      '1': 'build_config',
-      '3': 3,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.BuildTaskConfig',
-      '10': 'buildConfig'
-    },
+    {'1': 'build_config', '3': 3, '4': 1, '5': 11, '6': '.fatalder.BuildTaskConfig', '10': 'buildConfig'},
     {'1': 'github_base_url', '3': 4, '4': 1, '5': 9, '10': 'githubBaseUrl'},
-    {
-      '1': 'user_center_config',
-      '3': 5,
-      '4': 1,
-      '5': 11,
-      '6': '.fatalder.UserCenterConfig',
-      '10': 'userCenterConfig'
-    },
+    {'1': 'user_center_config', '3': 5, '4': 1, '5': 11, '6': '.fatalder.UserCenterConfig', '10': 'userCenterConfig'},
   ],
 };
 
@@ -585,20 +390,8 @@ final $typed_data.Uint8List frameworkConfigDescriptor = $convert.base64Decode(
 const BuildTaskConfig$json = {
   '1': 'BuildTaskConfig',
   '2': [
-    {
-      '1': 'min_once_parse_chunk_num',
-      '3': 1,
-      '4': 1,
-      '5': 5,
-      '10': 'minOnceParseChunkNum'
-    },
-    {
-      '1': 'min_matching_degree',
-      '3': 2,
-      '4': 1,
-      '5': 1,
-      '10': 'minMatchingDegree'
-    },
+    {'1': 'min_once_parse_chunk_num', '3': 1, '4': 1, '5': 5, '10': 'minOnceParseChunkNum'},
+    {'1': 'min_matching_degree', '3': 2, '4': 1, '5': 1, '10': 'minMatchingDegree'},
     {'1': 'max_fix_depth', '3': 3, '4': 1, '5': 5, '10': 'maxFixDepth'},
   ],
 };
@@ -632,9 +425,8 @@ const ValidateAPIKeyRequest$json = {
 };
 
 /// Descriptor for `ValidateAPIKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validateAPIKeyRequestDescriptor =
-    $convert.base64Decode(
-        'ChVWYWxpZGF0ZUFQSUtleVJlcXVlc3QSFwoHYXBpX2tleRgBIAEoCVIGYXBpS2V5');
+final $typed_data.Uint8List validateAPIKeyRequestDescriptor = $convert.base64Decode(
+    'ChVWYWxpZGF0ZUFQSUtleVJlcXVlc3QSFwoHYXBpX2tleRgBIAEoCVIGYXBpS2V5');
 
 @$core.Deprecated('Use validateAPIKeyResponseDescriptor instead')
 const ValidateAPIKeyResponse$json = {
@@ -646,10 +438,9 @@ const ValidateAPIKeyResponse$json = {
 };
 
 /// Descriptor for `ValidateAPIKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validateAPIKeyResponseDescriptor =
-    $convert.base64Decode(
-        'ChZWYWxpZGF0ZUFQSUtleVJlc3BvbnNlEhQKBXZhbGlkGAEgASgIUgV2YWxpZBIYCgdtZXNzYW'
-        'dlGAIgASgJUgdtZXNzYWdl');
+final $typed_data.Uint8List validateAPIKeyResponseDescriptor = $convert.base64Decode(
+    'ChZWYWxpZGF0ZUFQSUtleVJlc3BvbnNlEhQKBXZhbGlkGAEgASgIUgV2YWxpZBIYCgdtZXNzYW'
+    'dlGAIgASgJUgdtZXNzYWdl');
 
 @$core.Deprecated('Use listFilesRequestDescriptor instead')
 const ListFilesRequest$json = {
@@ -660,8 +451,8 @@ const ListFilesRequest$json = {
 };
 
 /// Descriptor for `ListFilesRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listFilesRequestDescriptor = $convert
-    .base64Decode('ChBMaXN0RmlsZXNSZXF1ZXN0EhIKBHBhdGgYASABKAlSBHBhdGg=');
+final $typed_data.Uint8List listFilesRequestDescriptor = $convert.base64Decode(
+    'ChBMaXN0RmlsZXNSZXF1ZXN0EhIKBHBhdGgYASABKAlSBHBhdGg=');
 
 @$core.Deprecated('Use fileInfoDescriptor instead')
 const FileInfo$json = {
@@ -682,14 +473,7 @@ final $typed_data.Uint8List fileInfoDescriptor = $convert.base64Decode(
 const FileList$json = {
   '1': 'FileList',
   '2': [
-    {
-      '1': 'files',
-      '3': 1,
-      '4': 3,
-      '5': 11,
-      '6': '.fatalder.FileInfo',
-      '10': 'files'
-    },
+    {'1': 'files', '3': 1, '4': 3, '5': 11, '6': '.fatalder.FileInfo', '10': 'files'},
   ],
 };
 
@@ -725,3 +509,90 @@ final $typed_data.Uint8List logMessageDescriptor = $convert.base64Decode(
     'CgpMb2dNZXNzYWdlEhwKCXRpbWVzdGFtcBgBIAEoCVIJdGltZXN0YW1wEhQKBWxldmVsGAIgAS'
     'gJUgVsZXZlbBIYCgdtZXNzYWdlGAMgASgJUgdtZXNzYWdlEhYKBnNvdXJjZRgEIAEoCVIGc291'
     'cmNl');
+
+const $core.Map<$core.String, $core.dynamic> FatalderServiceBase$json = {
+  '1': 'FatalderService',
+  '2': [
+    {'1': 'ListServerConfigs', '2': '.fatalder.Empty', '3': '.fatalder.ServerConfigList'},
+    {'1': 'GetServerConfig', '2': '.fatalder.GetServerConfigRequest', '3': '.fatalder.ServerConfig'},
+    {'1': 'CreateServerConfig', '2': '.fatalder.ServerConfig', '3': '.fatalder.ServerConfig'},
+    {'1': 'UpdateServerConfig', '2': '.fatalder.ServerConfig', '3': '.fatalder.ServerConfig'},
+    {'1': 'DeleteServerConfig', '2': '.fatalder.DeleteServerConfigRequest', '3': '.fatalder.Empty'},
+    {'1': 'ListTaskGroups', '2': '.fatalder.Empty', '3': '.fatalder.TaskGroupList'},
+    {'1': 'GetTaskGroup', '2': '.fatalder.GetTaskGroupRequest', '3': '.fatalder.TaskGroup'},
+    {'1': 'CreateTaskGroup', '2': '.fatalder.CreateTaskGroupRequest', '3': '.fatalder.TaskGroup'},
+    {'1': 'DeleteTaskGroup', '2': '.fatalder.DeleteTaskGroupRequest', '3': '.fatalder.Empty'},
+    {'1': 'ExecuteTaskGroup', '2': '.fatalder.ExecuteTaskGroupRequest', '3': '.fatalder.TaskProgress', '6': true},
+    {'1': 'StartBuild', '2': '.fatalder.StartBuildRequest', '3': '.fatalder.BuildProgress', '6': true},
+    {'1': 'ControlBuild', '2': '.fatalder.BuildControlRequest', '3': '.fatalder.Empty'},
+    {'1': 'StartExport', '2': '.fatalder.StartExportRequest', '3': '.fatalder.ExportProgress', '6': true},
+    {'1': 'GetFrameworkConfig', '2': '.fatalder.Empty', '3': '.fatalder.FrameworkConfig'},
+    {'1': 'UpdateFrameworkConfig', '2': '.fatalder.FrameworkConfig', '3': '.fatalder.FrameworkConfig'},
+    {'1': 'ValidateAPIKey', '2': '.fatalder.ValidateAPIKeyRequest', '3': '.fatalder.ValidateAPIKeyResponse'},
+    {'1': 'ListFiles', '2': '.fatalder.ListFilesRequest', '3': '.fatalder.FileList'},
+    {'1': 'StreamLogs', '2': '.fatalder.StreamLogsRequest', '3': '.fatalder.LogMessage', '6': true},
+  ],
+};
+
+@$core.Deprecated('Use fatalderServiceDescriptor instead')
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> FatalderServiceBase$messageJson = {
+  '.fatalder.Empty': Empty$json,
+  '.fatalder.ServerConfigList': ServerConfigList$json,
+  '.fatalder.ServerConfig': ServerConfig$json,
+  '.fatalder.GetServerConfigRequest': GetServerConfigRequest$json,
+  '.fatalder.DeleteServerConfigRequest': DeleteServerConfigRequest$json,
+  '.fatalder.TaskGroupList': TaskGroupList$json,
+  '.fatalder.GetTaskGroupRequest': GetTaskGroupRequest$json,
+  '.fatalder.TaskGroup': TaskGroup$json,
+  '.fatalder.Task': Task$json,
+  '.fatalder.BuildTask': BuildTask$json,
+  '.fatalder.BlockPos': BlockPos$json,
+  '.fatalder.ExportTask': ExportTask$json,
+  '.fatalder.CreateTaskGroupRequest': CreateTaskGroupRequest$json,
+  '.fatalder.DeleteTaskGroupRequest': DeleteTaskGroupRequest$json,
+  '.fatalder.ExecuteTaskGroupRequest': ExecuteTaskGroupRequest$json,
+  '.fatalder.TaskProgress': TaskProgress$json,
+  '.fatalder.StartBuildRequest': StartBuildRequest$json,
+  '.fatalder.BuildProgress': BuildProgress$json,
+  '.fatalder.BuildControlRequest': BuildControlRequest$json,
+  '.fatalder.StartExportRequest': StartExportRequest$json,
+  '.fatalder.ExportProgress': ExportProgress$json,
+  '.fatalder.FrameworkConfig': FrameworkConfig$json,
+  '.fatalder.BuildTaskConfig': BuildTaskConfig$json,
+  '.fatalder.UserCenterConfig': UserCenterConfig$json,
+  '.fatalder.ValidateAPIKeyRequest': ValidateAPIKeyRequest$json,
+  '.fatalder.ValidateAPIKeyResponse': ValidateAPIKeyResponse$json,
+  '.fatalder.ListFilesRequest': ListFilesRequest$json,
+  '.fatalder.FileList': FileList$json,
+  '.fatalder.FileInfo': FileInfo$json,
+  '.fatalder.StreamLogsRequest': StreamLogsRequest$json,
+  '.fatalder.LogMessage': LogMessage$json,
+};
+
+/// Descriptor for `FatalderService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+final $typed_data.Uint8List fatalderServiceDescriptor = $convert.base64Decode(
+    'Cg9GYXRhbGRlclNlcnZpY2USQAoRTGlzdFNlcnZlckNvbmZpZ3MSDy5mYXRhbGRlci5FbXB0eR'
+    'oaLmZhdGFsZGVyLlNlcnZlckNvbmZpZ0xpc3QSSwoPR2V0U2VydmVyQ29uZmlnEiAuZmF0YWxk'
+    'ZXIuR2V0U2VydmVyQ29uZmlnUmVxdWVzdBoWLmZhdGFsZGVyLlNlcnZlckNvbmZpZxJEChJDcm'
+    'VhdGVTZXJ2ZXJDb25maWcSFi5mYXRhbGRlci5TZXJ2ZXJDb25maWcaFi5mYXRhbGRlci5TZXJ2'
+    'ZXJDb25maWcSRAoSVXBkYXRlU2VydmVyQ29uZmlnEhYuZmF0YWxkZXIuU2VydmVyQ29uZmlnGh'
+    'YuZmF0YWxkZXIuU2VydmVyQ29uZmlnEkoKEkRlbGV0ZVNlcnZlckNvbmZpZxIjLmZhdGFsZGVy'
+    'LkRlbGV0ZVNlcnZlckNvbmZpZ1JlcXVlc3QaDy5mYXRhbGRlci5FbXB0eRI6Cg5MaXN0VGFza0'
+    'dyb3VwcxIPLmZhdGFsZGVyLkVtcHR5GhcuZmF0YWxkZXIuVGFza0dyb3VwTGlzdBJCCgxHZXRU'
+    'YXNrR3JvdXASHS5mYXRhbGRlci5HZXRUYXNrR3JvdXBSZXF1ZXN0GhMuZmF0YWxkZXIuVGFza0'
+    'dyb3VwEkgKD0NyZWF0ZVRhc2tHcm91cBIgLmZhdGFsZGVyLkNyZWF0ZVRhc2tHcm91cFJlcXVl'
+    'c3QaEy5mYXRhbGRlci5UYXNrR3JvdXASRAoPRGVsZXRlVGFza0dyb3VwEiAuZmF0YWxkZXIuRG'
+    'VsZXRlVGFza0dyb3VwUmVxdWVzdBoPLmZhdGFsZGVyLkVtcHR5Ek8KEEV4ZWN1dGVUYXNrR3Jv'
+    'dXASIS5mYXRhbGRlci5FeGVjdXRlVGFza0dyb3VwUmVxdWVzdBoWLmZhdGFsZGVyLlRhc2tQcm'
+    '9ncmVzczABEkQKClN0YXJ0QnVpbGQSGy5mYXRhbGRlci5TdGFydEJ1aWxkUmVxdWVzdBoXLmZh'
+    'dGFsZGVyLkJ1aWxkUHJvZ3Jlc3MwARI+CgxDb250cm9sQnVpbGQSHS5mYXRhbGRlci5CdWlsZE'
+    'NvbnRyb2xSZXF1ZXN0Gg8uZmF0YWxkZXIuRW1wdHkSRwoLU3RhcnRFeHBvcnQSHC5mYXRhbGRl'
+    'ci5TdGFydEV4cG9ydFJlcXVlc3QaGC5mYXRhbGRlci5FeHBvcnRQcm9ncmVzczABEkAKEkdldE'
+    'ZyYW1ld29ya0NvbmZpZxIPLmZhdGFsZGVyLkVtcHR5GhkuZmF0YWxkZXIuRnJhbWV3b3JrQ29u'
+    'ZmlnEk0KFVVwZGF0ZUZyYW1ld29ya0NvbmZpZxIZLmZhdGFsZGVyLkZyYW1ld29ya0NvbmZpZx'
+    'oZLmZhdGFsZGVyLkZyYW1ld29ya0NvbmZpZxJTCg5WYWxpZGF0ZUFQSUtleRIfLmZhdGFsZGVy'
+    'LlZhbGlkYXRlQVBJS2V5UmVxdWVzdBogLmZhdGFsZGVyLlZhbGlkYXRlQVBJS2V5UmVzcG9uc2'
+    'USOwoJTGlzdEZpbGVzEhouZmF0YWxkZXIuTGlzdEZpbGVzUmVxdWVzdBoSLmZhdGFsZGVyLkZp'
+    'bGVMaXN0EkEKClN0cmVhbUxvZ3MSGy5mYXRhbGRlci5TdHJlYW1Mb2dzUmVxdWVzdBoULmZhdG'
+    'FsZGVyLkxvZ01lc3NhZ2UwAQ==');
+
