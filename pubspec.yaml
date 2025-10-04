@@ -37,14 +37,14 @@ dependencies:
 
   # gRPC
   grpc: ^4.0.1
-  protobuf: ^3.1.0
+  protobuf: ^4.2.0
 
   # State Management
   provider: ^6.1.2
 
   # UI
-  flutter_slidable: ^3.1.1
-  file_picker: ^8.1.4
+  flutter_slidable: ^4.0.3
+  file_picker: ^10.3.3
   path_provider: ^2.1.5
 
   # Utils
@@ -60,7 +60,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
