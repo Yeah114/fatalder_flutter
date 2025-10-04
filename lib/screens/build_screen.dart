@@ -27,9 +27,9 @@ class _BuildScreenState extends State<BuildScreen> {
     // 检查是否有服务器配置
     if (appState.serverConfigs.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先添加服务器配置')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请先添加服务器配置')));
       Navigator.pop(context);
       return;
     }
@@ -108,21 +108,17 @@ class _BuildScreenState extends State<BuildScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('执行失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('执行失败: $e')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('开始建造'),
-      ),
-      body: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      appBar: AppBar(title: const Text('开始建造')),
+      body: const Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -138,7 +134,8 @@ class _QuickBuildProgressDialog extends StatefulWidget {
   });
 
   @override
-  State<_QuickBuildProgressDialog> createState() => _QuickBuildProgressDialogState();
+  State<_QuickBuildProgressDialog> createState() =>
+      _QuickBuildProgressDialogState();
 }
 
 class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
@@ -170,7 +167,9 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
 
       await for (final progress in stream) {
         // 调试：打印收到的进度信息
-        print('DEBUG: Received progress - status: ${progress.status}, message: ${progress.message}, logMessage: "${progress.logMessage}"');
+        print(
+          'DEBUG: Received progress - status: ${progress.status}, message: ${progress.message}, logMessage: "${progress.logMessage}"',
+        );
 
         // 更新状态
         if (progress.message.isNotEmpty) {
@@ -184,7 +183,9 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
           _addLog('[${_getStatusLabel(progress.status)}] ${progress.message}');
 
           if (progress.totalChunks > 0) {
-            _addLog('  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)');
+            _addLog(
+              '  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)',
+            );
           }
         }
 
@@ -225,6 +226,10 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
         return '已完成';
       case 'failed':
         return '失败';
+      case 'fix_mode':
+        return '修补模式';
+      case 'fixing':
+        return '修补中';
       default:
         return status;
     }
@@ -255,13 +260,13 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
             _isFailed
                 ? Icons.error
                 : _isCompleted
-                    ? Icons.check_circle
-                    : Icons.build,
+                ? Icons.check_circle
+                : Icons.build,
             color: _isFailed
                 ? Colors.red
                 : _isCompleted
-                    ? Colors.green
-                    : Colors.blue,
+                ? Colors.green
+                : Colors.blue,
           ),
           const SizedBox(width: 8),
           const Text('构建任务'),
@@ -301,10 +306,16 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
                   itemCount: _logs.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       child: Text(
                         _logs[index],
-                        style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                        ),
                       ),
                     );
                   },

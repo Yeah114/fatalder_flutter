@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- 允许使用 targetSdk 28 来支持在应用数据目录执行二进制文件 -->
+    <issue id="ExpiredTargetSdkVersion" severity="ignore" />
+</lint>

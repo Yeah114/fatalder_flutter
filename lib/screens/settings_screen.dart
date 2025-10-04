@@ -62,7 +62,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.language),
                     title: const Text('语言'),
-                    subtitle: Text(_getLanguageDisplayName(config?.language ?? 'zh')),
+                    subtitle: Text(
+                      _getLanguageDisplayName(config?.language ?? 'zh'),
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _showLanguageDialog(context),
                   ),
@@ -78,7 +80,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.link),
                     title: const Text('GitHub 源'),
-                    subtitle: Text(config?.githubBaseUrl ?? 'https://github.com'),
+                    subtitle: Text(
+                      config?.githubBaseUrl ?? 'https://github.com',
+                    ),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showGitHubBaseUrlDialog(context),
                   ),
@@ -95,7 +99,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.speed),
                     title: const Text('单次解析区块数'),
-                    subtitle: Text('${config?.buildConfig.minOnceParseChunkNum ?? 512} 个区块'),
+                    subtitle: Text(
+                      '${config?.buildConfig.minOnceParseChunkNum ?? 512} 个区块',
+                    ),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showMinOnceParseChunkNumDialog(context),
                   ),
@@ -103,7 +109,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.percent),
                     title: const Text('最小匹配度'),
-                    subtitle: Text('${config?.buildConfig.minMatchingDegree.toStringAsFixed(1) ?? '90.0'}%'),
+                    subtitle: Text(
+                      '${config?.buildConfig.minMatchingDegree.toStringAsFixed(1) ?? '90.0'}%',
+                    ),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showMinMatchingDegreeDialog(context),
                   ),
@@ -136,7 +144,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.key),
                     title: const Text('API 密钥'),
-                    subtitle: Text(_maskApiKey(config?.userCenterConfig.apiKey ?? '')),
+                    subtitle: Text(
+                      _maskApiKey(config?.userCenterConfig.apiKey ?? ''),
+                    ),
                     trailing: const Icon(Icons.edit),
                     onTap: () => _showApiKeyDialog(context),
                   ),
@@ -182,7 +192,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.delete_outline, color: Colors.red),
+                    leading: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                    ),
                     title: const Text('清除所有数据'),
                     subtitle: const Text('删除所有配置和任务数据'),
                     onTap: () => _showClearDataDialog(context),
@@ -201,7 +214,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isConnected = appState.isConnected;
 
     return Card(
-      color: isConnected ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+      color: isConnected
+          ? Colors.green.withOpacity(0.1)
+          : Colors.red.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -222,8 +237,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   Text(
                     isConnected
-                      ? 'gRPC 服务运行在端口 ${grpcService.currentPort}'
-                      : '无法连接到 gRPC 服务',
+                        ? 'gRPC 服务运行在端口 ${grpcService.currentPort}'
+                        : '无法连接到 gRPC 服务',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -303,7 +318,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
 
     await _updateFrameworkConfig(storagePath: selectedDirectory);
-    }
+  }
 
   // 显示用户中心地址对话框
   void _showUserCenterHostDialog(BuildContext context) {
@@ -361,7 +376,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               labelText: 'API Key',
               border: const OutlineInputBorder(),
               suffixIcon: IconButton(
-                icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
                 onPressed: () {
                   setState(() => obscureText = !obscureText);
                 },
@@ -401,8 +418,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // 构建 UserCenterConfig
       final userCenterConfig = UserCenterConfig(
-        baseRoot: userCenterHost ?? currentConfig?.userCenterConfig.baseRoot ?? '',
-        apiKey: userCenterApiKey ?? currentConfig?.userCenterConfig.apiKey ?? '',
+        baseRoot:
+            userCenterHost ?? currentConfig?.userCenterConfig.baseRoot ?? '',
+        apiKey:
+            userCenterApiKey ?? currentConfig?.userCenterConfig.apiKey ?? '',
       );
 
       final newConfig = FrameworkConfig(
@@ -410,22 +429,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         storagePath: storagePath ?? currentConfig?.storagePath ?? '',
         userCenterConfig: userCenterConfig,
         buildConfig: currentConfig?.buildConfig ?? BuildTaskConfig(),
-        githubBaseUrl: githubBaseUrl ?? currentConfig?.githubBaseUrl ?? 'https://github.com',
+        githubBaseUrl:
+            githubBaseUrl ??
+            currentConfig?.githubBaseUrl ??
+            'https://github.com',
       );
 
-      final updatedConfig = await grpcService.client.updateFrameworkConfig(newConfig);
+      final updatedConfig = await grpcService.client.updateFrameworkConfig(
+        newConfig,
+      );
       appState.setFrameworkConfig(updatedConfig);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('配置已保存')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('配置已保存')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
       }
     }
   }
@@ -485,16 +509,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 appState.setConnected(true);
 
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('gRPC 服务已重启')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('gRPC 服务已重启')));
                 }
               } catch (e) {
                 appState.setConnected(false);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('重启失败: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('重启失败: $e')));
                 }
               } finally {
                 appState.setLoading(false);
@@ -513,9 +537,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('清除所有数据'),
-        content: const Text(
-          '此操作将删除所有配置和任务数据，且无法恢复。\n\n确定要继续吗？',
-        ),
+        content: const Text('此操作将删除所有配置和任务数据，且无法恢复。\n\n确定要继续吗？'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -525,9 +547,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('清除数据功能待实现')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('清除数据功能待实现')));
             },
             child: const Text('确认删除'),
           ),
@@ -576,7 +598,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMinOnceParseChunkNumDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: (appState.frameworkConfig?.buildConfig.minOnceParseChunkNum ?? 512).toString(),
+      text: (appState.frameworkConfig?.buildConfig.minOnceParseChunkNum ?? 512)
+          .toString(),
     );
 
     showDialog(
@@ -613,9 +636,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () async {
               final value = int.tryParse(controller.text);
               if (value == null || value < 1) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('请输入大于 0 的整数')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('请输入大于 0 的整数')));
                 return;
               }
               await _updateBuildConfig(minOnceParseChunkNum: value);
@@ -632,7 +655,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMinMatchingDegreeDialog(BuildContext context) {
     final appState = Provider.of<AppState>(context, listen: false);
     final controller = TextEditingController(
-      text: (appState.frameworkConfig?.buildConfig.minMatchingDegree ?? 90.0).toString(),
+      text: (appState.frameworkConfig?.buildConfig.minMatchingDegree ?? 90.0)
+          .toString(),
     );
 
     showDialog(
@@ -650,7 +674,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 labelText: '匹配度',
                 hintText: '90.0',
@@ -725,9 +751,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () async {
               final value = int.tryParse(controller.text);
               if (value == null || value < 1) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('请输入大于 0 的整数')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('请输入大于 0 的整数')));
                 return;
               }
               await _updateBuildConfig(maxFixDepth: value);
@@ -753,8 +779,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final currentBuildConfig = currentConfig?.buildConfig;
 
       final newBuildConfig = BuildTaskConfig(
-        minOnceParseChunkNum: minOnceParseChunkNum ?? currentBuildConfig?.minOnceParseChunkNum ?? 512,
-        minMatchingDegree: minMatchingDegree ?? currentBuildConfig?.minMatchingDegree ?? 90.0,
+        minOnceParseChunkNum:
+            minOnceParseChunkNum ??
+            currentBuildConfig?.minOnceParseChunkNum ??
+            512,
+        minMatchingDegree:
+            minMatchingDegree ?? currentBuildConfig?.minMatchingDegree ?? 90.0,
         maxFixDepth: maxFixDepth ?? currentBuildConfig?.maxFixDepth ?? 5,
       );
 
@@ -766,30 +796,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
         userCenterConfig: currentConfig?.userCenterConfig ?? UserCenterConfig(),
       );
 
-      final updatedConfig = await grpcService.client.updateFrameworkConfig(newConfig);
+      final updatedConfig = await grpcService.client.updateFrameworkConfig(
+        newConfig,
+      );
       appState.setFrameworkConfig(updatedConfig);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('配置已保存')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('配置已保存')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
       }
     }
   }
 
   // 显示快速构建对话框
-  Future<void> _showQuickBuildDialog(BuildContext context, AppState appState) async {
+  Future<void> _showQuickBuildDialog(
+    BuildContext context,
+    AppState appState,
+  ) async {
     // 检查是否有服务器配置
     if (appState.serverConfigs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先添加服务器配置')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请先添加服务器配置')));
       return;
     }
 
@@ -812,12 +847,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // 显示快速导出对话框
-  Future<void> _showQuickExportDialog(BuildContext context, AppState appState) async {
+  Future<void> _showQuickExportDialog(
+    BuildContext context,
+    AppState appState,
+  ) async {
     // 检查是否有服务器配置
     if (appState.serverConfigs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先添加服务器配置')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请先添加服务器配置')));
       return;
     }
 
@@ -840,7 +878,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // 选择服务器配置
-  Future<String?> _selectServerConfig(BuildContext context, AppState appState) async {
+  Future<String?> _selectServerConfig(
+    BuildContext context,
+    AppState appState,
+  ) async {
     if (appState.serverConfigs.length == 1) {
       return appState.serverConfigs.first.name;
     }
@@ -888,9 +929,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('执行失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('执行失败: $e')));
     }
   }
 
@@ -917,9 +958,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('执行失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('执行失败: $e')));
     }
   }
 }
@@ -935,7 +976,8 @@ class _QuickBuildProgressDialog extends StatefulWidget {
   });
 
   @override
-  State<_QuickBuildProgressDialog> createState() => _QuickBuildProgressDialogState();
+  State<_QuickBuildProgressDialog> createState() =>
+      _QuickBuildProgressDialogState();
 }
 
 class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
@@ -978,7 +1020,9 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
         _addLog('[${_getStatusLabel(progress.status)}] ${progress.message}');
 
         if (progress.totalChunks > 0) {
-          _addLog('  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)');
+          _addLog(
+            '  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)',
+          );
         }
 
         // 显示日志消息
@@ -1017,6 +1061,10 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
         return '已完成';
       case 'failed':
         return '失败';
+      case 'fix_mode':
+        return '修补模式';
+      case 'fixing':
+        return '修补中';
       default:
         return status;
     }
@@ -1047,13 +1095,13 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
             _isFailed
                 ? Icons.error
                 : _isCompleted
-                    ? Icons.check_circle
-                    : Icons.build,
+                ? Icons.check_circle
+                : Icons.build,
             color: _isFailed
                 ? Colors.red
                 : _isCompleted
-                    ? Colors.green
-                    : Colors.blue,
+                ? Colors.green
+                : Colors.blue,
           ),
           const SizedBox(width: 8),
           const Text('快速构建'),
@@ -1093,10 +1141,16 @@ class _QuickBuildProgressDialogState extends State<_QuickBuildProgressDialog> {
                   itemCount: _logs.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       child: Text(
                         _logs[index],
-                        style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                        ),
                       ),
                     );
                   },
@@ -1128,10 +1182,12 @@ class _QuickExportProgressDialog extends StatefulWidget {
   });
 
   @override
-  State<_QuickExportProgressDialog> createState() => _QuickExportProgressDialogState();
+  State<_QuickExportProgressDialog> createState() =>
+      _QuickExportProgressDialogState();
 }
 
-class _QuickExportProgressDialogState extends State<_QuickExportProgressDialog> {
+class _QuickExportProgressDialogState
+    extends State<_QuickExportProgressDialog> {
   String _status = 'preparing';
   String _message = '准备中...';
   int _currentChunk = 0;
@@ -1171,7 +1227,9 @@ class _QuickExportProgressDialogState extends State<_QuickExportProgressDialog> 
         _addLog('[${progress.status}] ${progress.message}');
 
         if (progress.totalChunks > 0) {
-          _addLog('  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)');
+          _addLog(
+            '  进度: ${progress.currentChunk}/${progress.totalChunks} (${progress.progressPercent.toStringAsFixed(1)}%)',
+          );
         }
 
         // 显示日志消息
@@ -1228,13 +1286,13 @@ class _QuickExportProgressDialogState extends State<_QuickExportProgressDialog> 
             _isFailed
                 ? Icons.error
                 : _isCompleted
-                    ? Icons.check_circle
-                    : Icons.upload_file,
+                ? Icons.check_circle
+                : Icons.upload_file,
             color: _isFailed
                 ? Colors.red
                 : _isCompleted
-                    ? Colors.green
-                    : Colors.blue,
+                ? Colors.green
+                : Colors.blue,
           ),
           const SizedBox(width: 8),
           const Text('快速导出'),
@@ -1274,10 +1332,16 @@ class _QuickExportProgressDialogState extends State<_QuickExportProgressDialog> 
                   itemCount: _logs.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       child: Text(
                         _logs[index],
-                        style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                        ),
                       ),
                     );
                   },

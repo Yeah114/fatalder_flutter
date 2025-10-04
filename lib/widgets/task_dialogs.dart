@@ -48,6 +48,10 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
   // 文件路径输入方式
   bool _useManualInput = false;
 
+  // 修补模式
+  bool _autoEnterFixMode = false;
+  bool _enterFixModeDirectly = false;
+
   @override
   void initState() {
     super.initState();
@@ -71,8 +75,11 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
       _consoleX = task.consoleWorldPos.x;
       _consoleY = task.consoleWorldPos.y;
       _consoleZ = task.consoleWorldPos.z;
-      _useCustomConsolePos = _consoleX != -50 || _consoleY != 0 || _consoleZ != -50;
+      _useCustomConsolePos =
+          _consoleX != -50 || _consoleY != 0 || _consoleZ != -50;
       _showNBTProgress = task.showNbtProgress;
+      _autoEnterFixMode = task.autoEnterFixMode;
+      _enterFixModeDirectly = task.enterFixModeDirectly;
     }
   }
 
@@ -108,13 +115,17 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
                             onChanged: (v) => _filePath = v,
                           )
                         : ListTile(
-                            title: Text(_filePath.isEmpty ? '选择构建文件' : _filePath),
+                            title: Text(
+                              _filePath.isEmpty ? '选择构建文件' : _filePath,
+                            ),
                             trailing: const Icon(Icons.folder_open),
                             onTap: _pickFile,
                           ),
                   ),
                   IconButton(
-                    icon: Icon(_useManualInput ? Icons.folder_open : Icons.edit),
+                    icon: Icon(
+                      _useManualInput ? Icons.folder_open : Icons.edit,
+                    ),
                     tooltip: _useManualInput ? '浏览文件' : '手动输入',
                     onPressed: () {
                       setState(() {
@@ -134,11 +145,17 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
               _buildSectionTitle('起始坐标'),
               Row(
                 children: [
-                  Expanded(child: _buildIntField('X', _startX, (v) => _startX = v)),
+                  Expanded(
+                    child: _buildIntField('X', _startX, (v) => _startX = v),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildIntField('Y', _startY, (v) => _startY = v)),
+                  Expanded(
+                    child: _buildIntField('Y', _startY, (v) => _startY = v),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildIntField('Z', _startZ, (v) => _startZ = v)),
+                  Expanded(
+                    child: _buildIntField('Z', _startZ, (v) => _startZ = v),
+                  ),
                 ],
               ),
 
@@ -167,7 +184,11 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
 
               // 验证选项
               _buildSectionTitle('验证设置'),
-              _buildIntField('验证间隔 (区块)', _verifyAfterChunk, (v) => _verifyAfterChunk = v),
+              _buildIntField(
+                '验证间隔 (区块)',
+                _verifyAfterChunk,
+                (v) => _verifyAfterChunk = v,
+              ),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
                 decoration: const InputDecoration(labelText: '验证等级'),
@@ -218,20 +239,40 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
               _buildSectionTitle('控制台坐标'),
               SwitchListTile(
                 title: const Text('自定义控制台坐标'),
-                subtitle: Text(_useCustomConsolePos
-                  ? '当前: $_consoleX, $_consoleY, $_consoleZ'
-                  : '默认: -50, 0, -50'),
+                subtitle: Text(
+                  _useCustomConsolePos
+                      ? '当前: $_consoleX, $_consoleY, $_consoleZ'
+                      : '默认: -50, 0, -50',
+                ),
                 value: _useCustomConsolePos,
                 onChanged: (v) => setState(() => _useCustomConsolePos = v),
               ),
               if (_useCustomConsolePos) ...[
                 Row(
                   children: [
-                    Expanded(child: _buildIntField('X', _consoleX, (v) => _consoleX = v)),
+                    Expanded(
+                      child: _buildIntField(
+                        'X',
+                        _consoleX,
+                        (v) => _consoleX = v,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _buildIntField('Y', _consoleY, (v) => _consoleY = v)),
+                    Expanded(
+                      child: _buildIntField(
+                        'Y',
+                        _consoleY,
+                        (v) => _consoleY = v,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _buildIntField('Z', _consoleZ, (v) => _consoleZ = v)),
+                    Expanded(
+                      child: _buildIntField(
+                        'Z',
+                        _consoleZ,
+                        (v) => _consoleZ = v,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -245,6 +286,21 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
                 value: _showNBTProgress,
                 onChanged: (v) => setState(() => _showNBTProgress = v),
               ),
+
+              const Divider(),
+
+              // 修补模式
+              _buildSectionTitle('修补模式'),
+              SwitchListTile(
+                title: const Text('构建完成后自动进入修补模式'),
+                value: _autoEnterFixMode,
+                onChanged: (v) => setState(() => _autoEnterFixMode = v),
+              ),
+              SwitchListTile(
+                title: const Text('跳过构建直接进入修补模式'),
+                value: _enterFixModeDirectly,
+                onChanged: (v) => setState(() => _enterFixModeDirectly = v),
+              ),
             ],
           ),
         ),
@@ -254,10 +310,7 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('添加'),
-        ),
+        ElevatedButton(onPressed: _submit, child: const Text('添加')),
       ],
     );
   }
@@ -276,7 +329,11 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
     );
   }
 
-  Widget _buildIntField(String label, int initialValue, Function(int) onChanged) {
+  Widget _buildIntField(
+    String label,
+    int initialValue,
+    Function(int) onChanged,
+  ) {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
       initialValue: initialValue.toString(),
@@ -311,9 +368,9 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('选择文件失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('选择文件失败: $e')));
     }
   }
 
@@ -323,9 +380,9 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
     }
 
     if (_filePath.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请选择构建文件')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请选择构建文件')));
       return;
     }
 
@@ -350,7 +407,9 @@ class _BuildTaskDialogState extends State<BuildTaskDialog> {
         ..x = _consoleX
         ..y = _consoleY
         ..z = _consoleZ)
-      ..showNbtProgress = _showNBTProgress;
+      ..showNbtProgress = _showNBTProgress
+      ..autoEnterFixMode = _autoEnterFixMode
+      ..enterFixModeDirectly = _enterFixModeDirectly;
 
     Navigator.pop(context, buildTask);
   }
@@ -427,13 +486,17 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
                             onChanged: (v) => _filePath = v,
                           )
                         : ListTile(
-                            title: Text(_filePath.isEmpty ? '选择导出路径' : _filePath),
+                            title: Text(
+                              _filePath.isEmpty ? '选择导出路径' : _filePath,
+                            ),
                             trailing: const Icon(Icons.folder_open),
                             onTap: _pickFile,
                           ),
                   ),
                   IconButton(
-                    icon: Icon(_useManualInput ? Icons.folder_open : Icons.edit),
+                    icon: Icon(
+                      _useManualInput ? Icons.folder_open : Icons.edit,
+                    ),
                     tooltip: _useManualInput ? '浏览文件' : '手动输入',
                     onPressed: () {
                       setState(() {
@@ -466,11 +529,17 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
               _buildSectionTitle('起始坐标'),
               Row(
                 children: [
-                  Expanded(child: _buildIntField('X', _startX, (v) => _startX = v)),
+                  Expanded(
+                    child: _buildIntField('X', _startX, (v) => _startX = v),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildIntField('Y', _startY, (v) => _startY = v)),
+                  Expanded(
+                    child: _buildIntField('Y', _startY, (v) => _startY = v),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildIntField('Z', _startZ, (v) => _startZ = v)),
+                  Expanded(
+                    child: _buildIntField('Z', _startZ, (v) => _startZ = v),
+                  ),
                 ],
               ),
 
@@ -496,10 +565,7 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('取消'),
         ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('添加'),
-        ),
+        ElevatedButton(onPressed: _submit, child: const Text('添加')),
       ],
     );
   }
@@ -518,7 +584,11 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
     );
   }
 
-  Widget _buildIntField(String label, int initialValue, Function(int) onChanged) {
+  Widget _buildIntField(
+    String label,
+    int initialValue,
+    Function(int) onChanged,
+  ) {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
       initialValue: initialValue.toString(),
@@ -580,9 +650,9 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('选择目录失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('选择目录失败: $e')));
     }
   }
 
@@ -592,9 +662,9 @@ class _ExportTaskDialogState extends State<ExportTaskDialog> {
     }
 
     if (_filePath.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请选择导出路径')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请选择导出路径')));
       return;
     }
 

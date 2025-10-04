@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
@@ -13,11 +14,16 @@ class GrpcService {
   ClientChannel? _channel;
   FatalderServiceClient? _client;
   Process? _serverProcess;
+  IOSink? _logSink;
+  String? _logFilePath;
+  StreamSubscription<String>? _stdoutSubscription;
+  StreamSubscription<String>? _stderrSubscription;
 
   // Android 上使用 127.0.0.1 更可靠，其他平台使用 localhost
   String? _customHost;
-  String get _host => _customHost ?? (Platform.isAndroid ? '127.0.0.1' : 'localhost');
-  int _port = 12465;  // 默认起始端口改为 12465
+  String get _host =>
+      _customHost ?? (Platform.isAndroid ? '127.0.0.1' : 'localhost');
+  int _port = 12465; // 默认起始端口改为 12465
 
   FatalderServiceClient get client {
     if (_client == null) {
@@ -58,7 +64,8 @@ class GrpcService {
 
     // 其他平台进行端口扫描
     int port = 12465;
-    while (port < 12565) {  // 最多尝试 100 个端口
+    while (port < 12565) {
+      // 最多尝试 100 个端口
       if (await _isPortAvailable(port)) {
         print('Found available port: $port');
         return port;
@@ -138,7 +145,10 @@ class GrpcService {
             print('⚠️ chmod returned ${result.exitCode}: ${result.stderr}');
             // 在 Android 上尝试另一种方式
             if (Platform.isAndroid) {
-              final result2 = await Process.run('sh', ['-c', 'chmod 755 $targetBinary']);
+              final result2 = await Process.run('sh', [
+                '-c',
+                'chmod 755 $targetBinary',
+              ]);
               if (result2.exitCode == 0) {
                 print('✅ Execution permission granted via sh');
               } else {
@@ -154,7 +164,81 @@ class GrpcService {
 
       return targetBinary;
     } catch (e) {
-      throw Exception('Failed to load gRPC binary ($binaryName) from assets: $e');
+      throw Exception(
+        'Failed to load gRPC binary ($binaryName) from assets: $e',
+      );
+    }
+  }
+
+  Future<File> _resolveLogFile() async {
+    if (Platform.isAndroid) {
+      final externalLog = File('/sdcard/fatalder_grpc.log');
+      try {
+        await externalLog.parent.create(recursive: true);
+        if (!await externalLog.exists()) {
+          await externalLog.create(recursive: true);
+        }
+        return externalLog;
+      } catch (e) {
+        print('⚠️ 无法使用 /sdcard 保存日志，将回退到应用目录: $e');
+      }
+    }
+
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    final fallback = File('${appDocDir.path}/fatalder_grpc.log');
+    await fallback.parent.create(recursive: true);
+    if (!await fallback.exists()) {
+      await fallback.create(recursive: true);
+    }
+    return fallback;
+  }
+
+  Future<void> _ensureLogSink() async {
+    if (_logSink != null) {
+      return;
+    }
+
+    final logFile = await _resolveLogFile();
+    _logFilePath = logFile.path;
+    _logSink = logFile.openWrite(mode: FileMode.append);
+    _logSink!.writeln(
+      '\n===== gRPC 日志会话启动于 ${DateTime.now().toIso8601String()} =====',
+    );
+    print('📝 gRPC 日志路径: $_logFilePath');
+  }
+
+  void _appendLog(String message) {
+    final sink = _logSink;
+    if (sink == null) {
+      return;
+    }
+
+    try {
+      sink.writeln('[${DateTime.now().toIso8601String()}] $message');
+    } catch (e) {
+      print('⚠️ 写入 gRPC 日志失败: $e');
+    }
+  }
+
+  Future<void> _closeLogSink() async {
+    if (_logSink == null) {
+      return;
+    }
+    try {
+      await _logSink!.flush();
+    } catch (_) {}
+    await _logSink!.close();
+    _logSink = null;
+  }
+
+  Future<void> _cancelLogSubscriptions() async {
+    if (_stdoutSubscription != null) {
+      await _stdoutSubscription!.cancel();
+      _stdoutSubscription = null;
+    }
+    if (_stderrSubscription != null) {
+      await _stderrSubscription!.cancel();
+      _stderrSubscription = null;
     }
   }
 
@@ -174,6 +258,9 @@ class GrpcService {
       final String binaryPath = await _getGrpcBinaryPath();
       print('Using gRPC binary at: $binaryPath');
 
+      await _ensureLogSink();
+      _appendLog('准备启动 gRPC 进程，端口 $_port，二进制路径: $binaryPath');
+
       // 确保二进制有执行权限
       if (!Platform.isWindows) {
         try {
@@ -191,45 +278,65 @@ class GrpcService {
       // 启动服务进程
       print('🚀 Starting gRPC server on port $_port...');
       print('🚀 Command: $binaryPath --port $_port');
-      _serverProcess = await Process.start(
-        binaryPath,
-        ['--port', _port.toString()],
-      );
+      _serverProcess = await Process.start(binaryPath, [
+        '--port',
+        _port.toString(),
+      ]);
       print('🚀 Process started with PID: ${_serverProcess!.pid}');
+      _appendLog('gRPC 进程已启动，PID: ${_serverProcess!.pid}');
 
       // 用于检测服务器是否启动成功
       bool serverStarted = false;
       final serverReadyCompleter = Completer<bool>();
 
       // 监听进程输出
-      _serverProcess!.stdout.listen((data) {
-        final output = String.fromCharCodes(data);
-        print('gRPC server: $output');
+      _stdoutSubscription = _serverProcess!.stdout
+          .transform(utf8.decoder)
+          .listen((data) {
+            final output = data.replaceAll('\r', '').trimRight();
+            if (output.isEmpty) {
+              return;
+            }
+            print('gRPC server: $output');
+            _appendLog('[STDOUT] $output');
 
-        // 检测服务器启动成功的标记
-        if (!serverStarted && (output.contains('listening on') || output.contains('Server listening'))) {
-          serverStarted = true;
-          if (!serverReadyCompleter.isCompleted) {
-            serverReadyCompleter.complete(true);
-          }
-        }
-      });
+            final normalized = output.toLowerCase();
+            if (!serverStarted &&
+                (normalized.contains('listening on') ||
+                    normalized.contains('server listening'))) {
+              serverStarted = true;
+              if (!serverReadyCompleter.isCompleted) {
+                serverReadyCompleter.complete(true);
+              }
+            }
+          });
 
-      _serverProcess!.stderr.listen((data) {
-        final error = String.fromCharCodes(data);
-        print('gRPC server error: $error');
+      _stderrSubscription = _serverProcess!.stderr
+          .transform(utf8.decoder)
+          .listen((data) {
+            final errorOutput = data.replaceAll('\r', '').trimRight();
+            if (errorOutput.isEmpty) {
+              return;
+            }
+            print('gRPC server error: $errorOutput');
+            _appendLog('[STDERR] $errorOutput');
 
-        // 如果出现错误且服务器还未启动，标记为失败
-        if (!serverStarted && (error.contains('failed') || error.contains('error'))) {
-          if (!serverReadyCompleter.isCompleted) {
-            serverReadyCompleter.complete(false);
-          }
-        }
-      });
+            final normalizedError = errorOutput.toLowerCase();
+            if (!serverStarted &&
+                (normalizedError.contains('failed') ||
+                    normalizedError.contains('error'))) {
+              if (!serverReadyCompleter.isCompleted) {
+                serverReadyCompleter.complete(false);
+              }
+            }
+          });
 
       // 监听进程退出
-      _serverProcess!.exitCode.then((exitCode) {
+      _serverProcess!.exitCode.then((exitCode) async {
         print('gRPC server exited with code $exitCode');
+        _appendLog('gRPC 进程退出，退出码: $exitCode');
+        await _cancelLogSubscriptions();
+        await _closeLogSink();
         _serverProcess = null;
         if (!serverReadyCompleter.isCompleted) {
           serverReadyCompleter.complete(false);
@@ -267,7 +374,11 @@ class GrpcService {
         for (int i = 0; i < 10; i++) {
           await Future.delayed(const Duration(milliseconds: 500));
           try {
-            final socket = await Socket.connect(_host, _port, timeout: const Duration(milliseconds: 500));
+            final socket = await Socket.connect(
+              _host,
+              _port,
+              timeout: const Duration(milliseconds: 500),
+            );
             await socket.close();
             serverReady = true;
             print('✅ gRPC server ready on port $_port (${(i + 1) * 500}ms)');
@@ -315,9 +426,9 @@ class GrpcService {
         _client = FatalderServiceClient(_channel!);
 
         // 测试连接（减少超时时间）
-        await _client!.getFrameworkConfig(Empty()).timeout(
-          const Duration(seconds: 2),
-        );
+        await _client!
+            .getFrameworkConfig(Empty())
+            .timeout(const Duration(seconds: 2));
 
         print('✅ 已连接到 gRPC 服务 $_host:$_port');
         return;
@@ -348,8 +459,12 @@ class GrpcService {
   /// 停止服务进程
   Future<void> stopServer() async {
     if (_serverProcess != null) {
+      if (_logSink != null) {
+        _appendLog('收到停止请求，尝试结束 PID ${_serverProcess!.pid}');
+      }
       _serverProcess!.kill();
       _serverProcess = null;
+      await _cancelLogSubscriptions();
       print('gRPC server stopped');
     }
   }
