@@ -280,7 +280,7 @@ class GrpcService {
       final launchArgs = ['-port', _port.toString()];
       print('🚀 Command: $binaryPath ${launchArgs.join(" ")}');
       _appendLog('启动命令: $binaryPath ${launchArgs.join(" ")}');
-      _serverProcess = await Process.start(binaryPath, launchArgs);
+      _serverProcess = await Process.start(binaryPath, launchArgs, runInShell: true);
       print('🚀 Process started with PID: ${_serverProcess!.pid}');
       _appendLog('gRPC 进程已启动，PID: ${_serverProcess!.pid}');
 
