@@ -50,6 +50,7 @@ dependencies:
   # Utils
   path: ^1.9.0
   process_run: ^1.2.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

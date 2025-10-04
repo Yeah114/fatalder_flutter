@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../generated/fatalder.pbgrpc.dart';
 
 class GrpcService {
@@ -16,8 +17,11 @@ class GrpcService {
   Process? _serverProcess;
   IOSink? _logSink;
   String? _logFilePath;
+  String? _appDocPath;
   StreamSubscription<String>? _stdoutSubscription;
   StreamSubscription<String>? _stderrSubscription;
+  bool _storagePermissionChecked = false;
+  bool _hasExternalStoragePermission = false;
 
   // Android 上使用 127.0.0.1 更可靠，其他平台使用 localhost
   String? _customHost;
@@ -76,6 +80,46 @@ class GrpcService {
     throw Exception('No available port found in range 12465-12564');
   }
 
+  Future<String> _ensureAppDocumentPath() async {
+    if (_appDocPath != null) {
+      return _appDocPath!;
+    }
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    _appDocPath = appDocDir.path;
+    return _appDocPath!;
+  }
+
+  Future<bool> _ensureStoragePermission() async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+
+    if (_storagePermissionChecked) {
+      return _hasExternalStoragePermission;
+    }
+
+    PermissionStatus status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted && status.isDenied) {
+      status = await Permission.manageExternalStorage.request();
+    }
+
+    if (status.isGranted) {
+      _storagePermissionChecked = true;
+      _hasExternalStoragePermission = true;
+      return true;
+    }
+
+    var storageStatus = await Permission.storage.status;
+    if (!storageStatus.isGranted) {
+      storageStatus = await Permission.storage.request();
+    }
+
+    final granted = storageStatus.isGranted;
+    _storagePermissionChecked = true;
+    _hasExternalStoragePermission = granted;
+    return granted;
+  }
+
   /// 获取 gRPC 二进制文件路径
   Future<String> _getGrpcBinaryPath() async {
     // 根据平台和架构选择二进制文件名
@@ -98,6 +142,7 @@ class GrpcService {
     // 1. 在开发环境，直接使用项目目录的 assets
     final String devBinary = '${Directory.current.path}/assets/$binaryName';
     if (await File(devBinary).exists()) {
+      await _ensureAppDocumentPath();
       print('Using dev binary: $devBinary');
       // 确保有执行权限
       if (!Platform.isWindows) {
@@ -114,7 +159,7 @@ class GrpcService {
     }
 
     // 2. 在发布环境，从 assets 复制到应用数据目录
-    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    final Directory appDocDir = Directory(await _ensureAppDocumentPath());
     final String targetBinary = '${appDocDir.path}/$binaryName';
 
     // 检查目标文件是否已存在
@@ -172,19 +217,24 @@ class GrpcService {
 
   Future<File> _resolveLogFile() async {
     if (Platform.isAndroid) {
-      final externalLog = File('/sdcard/fatalder_grpc.log');
-      try {
-        await externalLog.parent.create(recursive: true);
-        if (!await externalLog.exists()) {
-          await externalLog.create(recursive: true);
+      final granted = await _ensureStoragePermission();
+      if (granted) {
+        final externalLog = File('/sdcard/fatalder_grpc.log');
+        try {
+          await externalLog.parent.create(recursive: true);
+          if (!await externalLog.exists()) {
+            await externalLog.create(recursive: true);
+          }
+          return externalLog;
+        } catch (e) {
+          print('⚠️ 无法使用 /sdcard 保存日志，将回退到应用目录: $e');
         }
-        return externalLog;
-      } catch (e) {
-        print('⚠️ 无法使用 /sdcard 保存日志，将回退到应用目录: $e');
+      } else {
+        print('⚠️ 外部存储权限未授予，使用应用目录保存日志');
       }
     }
 
-    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    final Directory appDocDir = Directory(await _ensureAppDocumentPath());
     final fallback = File('${appDocDir.path}/fatalder_grpc.log');
     await fallback.parent.create(recursive: true);
     if (!await fallback.exists()) {
@@ -277,10 +327,16 @@ class GrpcService {
 
       // 启动服务进程
       print('🚀 Starting gRPC server on port $_port...');
-      final launchArgs = ['-port', _port.toString()];
+      final storagePath = await _ensureAppDocumentPath();
+      final launchArgs = [
+        '-port',
+        _port.toString(),
+        '-storage-path',
+        storagePath,
+      ];
       print('🚀 Command: $binaryPath ${launchArgs.join(" ")}');
       _appendLog('启动命令: $binaryPath ${launchArgs.join(" ")}');
-      _serverProcess = await Process.start(binaryPath, launchArgs, runInShell: true);
+      _serverProcess = await Process.start(binaryPath, launchArgs);
       print('🚀 Process started with PID: ${_serverProcess!.pid}');
       _appendLog('gRPC 进程已启动，PID: ${_serverProcess!.pid}');
 
