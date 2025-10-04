@@ -277,9 +277,9 @@ class GrpcService {
 
       // 启动服务进程
       print('🚀 Starting gRPC server on port $_port...');
-      print('🚀 Command: $binaryPath --port $_port');
+      print('🚀 Command: $binaryPath -port $_port');
       _serverProcess = await Process.start(binaryPath, [
-        '--port',
+        '-port',
         _port.toString(),
       ]);
       print('🚀 Process started with PID: ${_serverProcess!.pid}');
